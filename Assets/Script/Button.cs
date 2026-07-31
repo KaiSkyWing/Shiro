@@ -1,8 +1,11 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ButtonTrigger : MonoBehaviour
+public class Button : MonoBehaviour
 {
+    [SerializeField] private bool _isEventButton = true;
+
+    [Header("For Event Button")]
     [SerializeField] private bool _triggerOnlyOnce = true;
     [SerializeField] private Sprite _whiteButtonSprite;
     [SerializeField] private Sprite _whiteButtonPressedSprite;
@@ -15,17 +18,43 @@ public class ButtonTrigger : MonoBehaviour
     private SpriteRenderer _whiteButton;
     private SpriteRenderer _blackButton;
 
+    [Header("For BoxReset Button")]
+    [SerializeField] private GameObject[] _boxesToReset;
+    [SerializeField] private Sprite _whiteResetButtonSprite;
+    [SerializeField] private Sprite _whiteResetButtonPressedSprite;
+    [SerializeField] private Sprite _blackResetButtonSprite;
+    [SerializeField] private Sprite _blackResetButtonPressedSprite;
+
+    private SpriteRenderer _whiteResetButton;
+    private SpriteRenderer _blackResetButton;
+    private Vector3[] _boxInitialPosition;
+
+
     private bool _pressed;
 
     private void Awake()
     {
-        if (_whiteButton == null)
+
+        if (_isEventButton)
+        {
             _whiteButton = transform.Find("WhiteButton")?.GetComponent<SpriteRenderer>();
-
-        if (_blackButton == null)
             _blackButton = transform.Find("BlackButton")?.GetComponent<SpriteRenderer>();
+            SetEventButtonSprites(false);
+        }
+        else
+        {
+            _boxInitialPosition = new Vector3[_boxesToReset.Length];
 
-        SetButtonSprites(false);
+            for (int i = 0; i < _boxesToReset.Length; i++)
+            {
+                _boxInitialPosition[i] = _boxesToReset[i].transform.position;
+            }
+
+            _whiteResetButton = transform.Find("WhiteResetButton")?.GetComponent<SpriteRenderer>();
+            _blackResetButton = transform.Find("BlackResetButton")?.GetComponent<SpriteRenderer>();
+            SetResetButtonSprites(false);
+            
+        }
     }
 
     private void OnTriggerStay2D(Collider2D other)
@@ -37,8 +66,26 @@ public class ButtonTrigger : MonoBehaviour
             return;
 
         _pressed = true;
-        SetButtonSprites(true);
-        _onPressed.Invoke();
+
+        if(_isEventButton)
+        {
+            SetEventButtonSprites(true);
+            _onPressed.Invoke();
+        }
+        else
+        {
+            Debug.Log("Reset Button Pressed");
+            SetResetButtonSprites(true);
+
+            foreach (GameObject box in _boxesToReset)
+            {
+                if (box != null)
+                {
+                    int index = System.Array.IndexOf(_boxesToReset, box);
+                    box.transform.position = _boxInitialPosition[index];
+                }
+            }
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -47,16 +94,33 @@ public class ButtonTrigger : MonoBehaviour
             return;
 
         _pressed = false;
-        SetButtonSprites(false);
-        _onReleased.Invoke();
+
+        if (_isEventButton)
+        {
+            SetEventButtonSprites(false);
+            _onReleased.Invoke();
+        }
+        else
+        {
+            SetResetButtonSprites(false);
+        }
     }
 
-    private void SetButtonSprites(bool pressed)
+    private void SetEventButtonSprites(bool pressed)
     {
         if (_whiteButton != null)
             _whiteButton.sprite = pressed ? _whiteButtonPressedSprite : _whiteButtonSprite;
 
         if (_blackButton != null)
             _blackButton.sprite = pressed ? _blackButtonPressedSprite : _blackButtonSprite;
+    }
+
+    private void SetResetButtonSprites(bool pressed)
+    {
+        if (_whiteResetButton != null)
+            _whiteResetButton.sprite = pressed ? _whiteResetButtonPressedSprite : _whiteResetButtonSprite;
+
+        if (_blackResetButton != null)
+            _blackResetButton.sprite = pressed ? _blackResetButtonPressedSprite : _blackResetButtonSprite;
     }
 }

@@ -137,8 +137,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1d4b084e2dede45cbbb81fdfc604e012
-      internalID: 1374535988
+      spriteID: 364c6785339f949c1bce13b65044eeaa
+      internalID: -855321068
       vertices: []
       indices: 
       edges: []
@@ -158,8 +158,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c76d82655d2ea4fb3913bc8b5edab17d
-      internalID: -1590550981
+      spriteID: 24a2ea162bbb54f2f8881f2d511416cc
+      internalID: -93475570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BWButton2_2
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 160
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cd58c1f0a8814499a3f4bebf23f6723
+      internalID: 977289126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BWButton2_3
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 160
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4efb6af702b234455a942073944ed346
+      internalID: -610956476
       vertices: []
       indices: 
       edges: []
@@ -175,8 +217,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      BWButton2_0: 1374535988
-      BWButton2_1: -1590550981
+      BWButton2_0: -855321068
+      BWButton2_1: -93475570
+      BWButton2_2: 977289126
+      BWButton2_3: -610956476
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
