@@ -16,9 +16,12 @@ public class Player : MonoBehaviour
     private bool _isGrounded;
     private bool _isJumping;
 
+    private Vector3 _spawnPosition;
+
     private void Awake()
     {
         _isAlive = true;
+        _spawnPosition = transform.position;
 
         if (_rigidbody2D == null)
         {
@@ -35,6 +38,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        Retry();
+
         if (_isAlive)
         {
             Light();
@@ -45,6 +50,15 @@ public class Player : MonoBehaviour
             _rigidbody2D.velocity = Vector2.zero;
             //Dead
             Debug.Log("死んだよ！");
+        }
+    }
+
+    private void Retry()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            _isAlive = true;
+            transform.position = _spawnPosition;
         }
     }
 
@@ -122,6 +136,10 @@ public class Player : MonoBehaviour
         if (collider.CompareTag("Water"))
         {
             _isAlive = false;
+        }
+        if (collider.CompareTag("Checkpoint"))
+        {
+            _spawnPosition = collider.transform.position;
         }
     }
 
