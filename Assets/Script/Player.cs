@@ -7,16 +7,19 @@ public class Player : MonoBehaviour
     [SerializeField] private float _coyoteTime = 0.2f;
     [SerializeField] private float _jumpBufferTime = 0.2f;
     [SerializeField] private bool _isFacingRight = true;
-    [SerializeField] private bool _isGrounded;
-    [SerializeField] private bool _isJumping;
     [SerializeField] private float _horizontal;
     [SerializeField] private float _coyoteTimeCounter;
     [SerializeField] private float _jumpBufferCounter;
     [SerializeField] private Rigidbody2D _rigidbody2D;
     [SerializeField] private GameObject _spriteMask;
+    private bool _isAlive;
+    private bool _isGrounded;
+    private bool _isJumping;
 
     private void Awake()
     {
+        _isAlive = true;
+
         if (_rigidbody2D == null)
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
@@ -31,6 +34,29 @@ public class Player : MonoBehaviour
     }
 
     private void Update()
+    {
+        if (_isAlive)
+        {
+            Light();
+            Move();
+        }
+        else
+        {
+            _rigidbody2D.velocity = Vector2.zero;
+            //Dead
+            Debug.Log("死んだよ！");
+        }
+    }
+
+    private void Light()
+    {
+        if (_spriteMask != null)
+        {
+            _spriteMask.SetActive(Input.GetKey(KeyCode.F));
+        }
+    }
+
+    private void Move()
     {
         _horizontal = Input.GetAxisRaw("Horizontal");
 
@@ -66,10 +92,6 @@ public class Player : MonoBehaviour
             _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _rigidbody2D.velocity.y * 0.5f);
         }
 
-        if (_spriteMask != null)
-        {
-            _spriteMask.SetActive(Input.GetKey(KeyCode.F));
-        }
 
         Flip();
     }
@@ -92,6 +114,14 @@ public class Player : MonoBehaviour
             _isFacingRight = !_isFacingRight;
             localScale.x *= -1f;
             transform.localScale = localScale;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("Water"))
+        {
+            _isAlive = false;
         }
     }
 
