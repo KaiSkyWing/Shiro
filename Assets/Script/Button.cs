@@ -74,7 +74,6 @@ public class Button : MonoBehaviour
         }
         else
         {
-            Debug.Log("Reset Button Pressed");
             SetResetButtonSprites(true);
 
             foreach (GameObject box in _boxesToReset)
