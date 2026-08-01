@@ -10,14 +10,24 @@ public class Player : MonoBehaviour
     [SerializeField] private float _horizontal;
     [SerializeField] private float _coyoteTimeCounter;
     [SerializeField] private float _jumpBufferCounter;
+    [SerializeField] private const float _waterToPlayerDistance = 30f;
     [SerializeField] private Rigidbody2D _rigidbody2D;
     [SerializeField] private GameObject _spriteMask;
+    [SerializeField] private FadeControl _fadeControl;
+    [SerializeField] private GameObject _water;
+
+    [HideInInspector] public bool IsPaused = false;
+
     private bool _isAlive;
     private bool _isGrounded;
     private bool _isJumping;
     private bool _isOnLadder;
     private float _vertical;
     private float _defaultGravityScale;
+
+    // Ladder jump detachment cooldown
+    private float _ladderJumpCooldown = 0f;
+    private const float LADDER_JUMP_COOLDOWN_TIME = 0.4f;
 
     private Vector3 _spawnPosition;
 
@@ -43,6 +53,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (IsPaused)
+            return;
         Retry();
 
         if (_isAlive)
@@ -53,7 +65,7 @@ public class Player : MonoBehaviour
         else
         {
             _rigidbody2D.velocity = Vector2.zero;
-            //Dead
+            // Dead
             Debug.Log("死んだよ！");
         }
     }
@@ -79,10 +91,23 @@ public class Player : MonoBehaviour
     {
         _horizontal = Input.GetAxisRaw("Horizontal");
 
+        // Handle ladder detachment timer
+        if (_ladderJumpCooldown > 0f)
+        {
+            _ladderJumpCooldown -= Time.deltaTime;
+        }
+
         if (_isOnLadder)
         {
             _vertical = Input.GetAxisRaw("Vertical");
             Flip();
+
+            if (Input.GetButtonDown("Jump"))
+            {
+                DetachFromLadder();
+                Jump();
+            }
+
             return;
         }
 
@@ -110,7 +135,6 @@ public class Player : MonoBehaviour
             Jump();
             _jumpBufferCounter = 0f;
             _coyoteTimeCounter = 0f;
-            _isJumping = true;
         }
 
         if (Input.GetButtonUp("Jump") && _rigidbody2D.velocity.y > 0f)
@@ -118,19 +142,26 @@ public class Player : MonoBehaviour
             _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _rigidbody2D.velocity.y * 0.5f);
         }
 
-
         Flip();
     }
 
     private void FixedUpdate()
     {
-        float verticalVelocity = _isOnLadder ? _vertical * _moveSpeed : _rigidbody2D.velocity.y;
+        float verticalVelocity = _isOnLadder && !_isJumping ? _vertical * _moveSpeed : _rigidbody2D.velocity.y;
         _rigidbody2D.velocity = new Vector2(_horizontal * _moveSpeed, verticalVelocity);
     }
 
     private void Jump()
     {
         _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _jumpPower);
+        _isJumping = true;
+    }
+
+    private void DetachFromLadder()
+    {
+        _isOnLadder = false;
+        _rigidbody2D.gravityScale = _defaultGravityScale;
+        _ladderJumpCooldown = LADDER_JUMP_COOLDOWN_TIME;
     }
 
     private void Flip()
@@ -146,9 +177,14 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.CompareTag("Water"))
+        if (collider.CompareTag("Water") && _isAlive)
         {
             _isAlive = false;
+
+            if (_fadeControl != null)
+                _fadeControl.FadeOut(SpawnAtCheckpoint);
+            else
+                SpawnAtCheckpoint();
         }
         if (collider.CompareTag("Checkpoint"))
         {
@@ -158,12 +194,11 @@ public class Player : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collider)
     {
-        
-        if (collider.CompareTag("Ladder"))
+        if (collider.CompareTag("Ladder") && _ladderJumpCooldown <= 0f)
         {
             _isOnLadder = true;
             _rigidbody2D.gravityScale = 0f;
-            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, 0f);
+            _isGrounded = true;
         }
     }
 
@@ -173,22 +208,31 @@ public class Player : MonoBehaviour
         {
             _isOnLadder = false;
             _rigidbody2D.gravityScale = _defaultGravityScale;
+            _isGrounded = false;
         }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Ground")|| collision.collider.CompareTag("Box"))
+        if (collision.collider.CompareTag("Ground") || collision.collider.CompareTag("Box"))
         {
             _isGrounded = true;
+            _isJumping = false;
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Ground")|| collision.collider.CompareTag("Box"))
+        if (collision.collider.CompareTag("Ground") || collision.collider.CompareTag("Box"))
         {
             _isGrounded = false;
         }
+    }
+
+    public void SpawnAtCheckpoint()
+    {
+        transform.position = _spawnPosition;
+        _water.transform.position = new Vector3(0, _spawnPosition.y - _waterToPlayerDistance, 0);
+        _isAlive = true;
     }
 }
