@@ -15,6 +15,9 @@ public class Player : MonoBehaviour
     private bool _isAlive;
     private bool _isGrounded;
     private bool _isJumping;
+    private bool _isOnLadder;
+    private float _vertical;
+    private float _defaultGravityScale;
 
     private Vector3 _spawnPosition;
 
@@ -34,6 +37,8 @@ public class Player : MonoBehaviour
             _rigidbody2D.gravityScale = 1f;
             _rigidbody2D.freezeRotation = true;
         }
+
+        _defaultGravityScale = _rigidbody2D.gravityScale;
     }
 
     private void Update()
@@ -74,6 +79,13 @@ public class Player : MonoBehaviour
     {
         _horizontal = Input.GetAxisRaw("Horizontal");
 
+        if (_isOnLadder)
+        {
+            _vertical = Input.GetAxisRaw("Vertical");
+            Flip();
+            return;
+        }
+
         if (_isGrounded)
         {
             _coyoteTimeCounter = _coyoteTime;
@@ -112,7 +124,8 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _rigidbody2D.velocity = new Vector2(_horizontal * _moveSpeed, _rigidbody2D.velocity.y);
+        float verticalVelocity = _isOnLadder ? _vertical * _moveSpeed : _rigidbody2D.velocity.y;
+        _rigidbody2D.velocity = new Vector2(_horizontal * _moveSpeed, verticalVelocity);
     }
 
     private void Jump()
@@ -143,9 +156,29 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnTriggerStay2D(Collider2D collider)
+    {
+        
+        if (collider.CompareTag("Ladder"))
+        {
+            _isOnLadder = true;
+            _rigidbody2D.gravityScale = 0f;
+            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, 0f);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collider)
+    {
+        if (collider.CompareTag("Ladder"))
+        {
+            _isOnLadder = false;
+            _rigidbody2D.gravityScale = _defaultGravityScale;
+        }
+    }
+
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Ground"))
+        if (collision.collider.CompareTag("Ground")|| collision.collider.CompareTag("Box"))
         {
             _isGrounded = true;
         }
@@ -153,7 +186,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Ground"))
+        if (collision.collider.CompareTag("Ground")|| collision.collider.CompareTag("Box"))
         {
             _isGrounded = false;
         }

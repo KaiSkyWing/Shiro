@@ -8,6 +8,7 @@ TagManager:
   - Water
   - Box
   - Checkpoint
+  - Ladder
   layers:
   - Default
   - TransparentFX
