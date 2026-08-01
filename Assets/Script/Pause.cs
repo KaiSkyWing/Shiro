@@ -16,6 +16,7 @@ public class Pause : MonoBehaviour
 
     public void PauseGame()
     {
+        Debug.Log("Pause");
         Time.timeScale = 0f;
         _pauseMenu.SetActive(true);
         _pauseIconObject.SetActive(false);

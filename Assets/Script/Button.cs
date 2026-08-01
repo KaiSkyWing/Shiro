@@ -62,7 +62,7 @@ public class Button : MonoBehaviour
         if (_pressed && _triggerOnlyOnce)
             return;
 
-        if (!other.CompareTag("Player") && !other.CompareTag("Box"))
+        if (!other.CompareTag("Player") && !other.CompareTag("Box")&& !other.CompareTag("CurlingStone"))
             return;
 
         _pressed = true;
@@ -89,7 +89,7 @@ public class Button : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (_triggerOnlyOnce || !other.CompareTag("Player") && !other.CompareTag("Box"))
+        if (_triggerOnlyOnce || !other.CompareTag("Player") && !other.CompareTag("Box") && !other.CompareTag("CurlingStone"))
             return;
 
         _pressed = false;
