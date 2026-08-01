@@ -5,6 +5,7 @@ public class LightSwitch : MonoBehaviour
 {
     [SerializeField] private UnityEvent _onPressed;
     [SerializeField] private UnityEvent _onReleased;
+    [SerializeField] private bool _onlyTriggerOnce = true;
 
     /*
     [SerializeField] private Sprite _whiteButtonSprite;
@@ -34,9 +35,11 @@ public class LightSwitch : MonoBehaviour
             //SetLightButtonSprites(true);
         }
     }
-
+    
     private void OnTriggerExit2D(Collider2D collider)
     {
+        if (_onlyTriggerOnce)
+            return;
         Debug.Log("LightSwitch Trigger Exit by: " + collider.name);
         if (collider.CompareTag("LightMask"))
         {
