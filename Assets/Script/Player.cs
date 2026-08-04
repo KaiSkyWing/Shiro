@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     private float _vertical;
     private float _defaultGravityScale;
     private float _footstepTimer;
+    
     [SerializeField] private float _footstepInterval = 0.05f;
 
     // Ladder jump detachment cooldown
