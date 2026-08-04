@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     [SerializeField] private FadeControl _fadeControl;
     [SerializeField] private GameObject _water;
 
+    [SerializeField] private MusicManager _musicManager;
+
     [HideInInspector] public bool IsPaused = false;
 
     private bool _isAlive;
@@ -24,6 +26,8 @@ public class Player : MonoBehaviour
     private bool _isOnLadder;
     private float _vertical;
     private float _defaultGravityScale;
+    private float _footstepTimer;
+    [SerializeField] private float _footstepInterval = 0.05f;
 
     // Ladder jump detachment cooldown
     private float _ladderJumpCooldown = 0f;
@@ -84,6 +88,17 @@ public class Player : MonoBehaviour
         if (_spriteMask != null)
         {
             _spriteMask.SetActive(Input.GetKey(KeyCode.F));
+            if (_musicManager != null)
+            {
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    _musicManager.PlaySE(2);
+                }
+                else if (Input.GetKeyUp(KeyCode.F))
+                {
+                    _musicManager.PlaySE(3);
+                }
+            }
         }
     }
 
@@ -121,6 +136,23 @@ public class Player : MonoBehaviour
             _coyoteTimeCounter -= Time.deltaTime;
         }
 
+        if (_isGrounded && Mathf.Abs(_horizontal) > 0f)
+        {
+            _footstepTimer -= Time.deltaTime;
+            if (_footstepTimer <= 0f)
+            {
+                if (_musicManager != null)
+                {
+                    _musicManager.PlaySE(6);
+                }
+                _footstepTimer = _footstepInterval;
+            }
+        }
+        else
+        {
+            _footstepTimer = 0f;
+        }
+
         if (Input.GetButtonDown("Jump"))
         {
             _jumpBufferCounter = _jumpBufferTime;
@@ -155,6 +187,7 @@ public class Player : MonoBehaviour
     {
         _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _jumpPower);
         _isJumping = true;
+        _musicManager.PlaySE(5); 
     }
 
     private void DetachFromLadder()
@@ -232,7 +265,15 @@ public class Player : MonoBehaviour
     public void SpawnAtCheckpoint()
     {
         transform.position = _spawnPosition;
+        _rigidbody2D.velocity = Vector2.zero;
         _water.transform.position = new Vector3(0, _spawnPosition.y - _waterToPlayerDistance, 0);
         _isAlive = true;
+    }
+
+    public void StopMovement()
+    {
+        _rigidbody2D.velocity = Vector2.zero;
+        IsPaused = true;
+
     }
 }

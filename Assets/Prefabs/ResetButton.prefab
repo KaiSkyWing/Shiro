@@ -104,6 +104,8 @@ MonoBehaviour:
   _onReleased:
     m_PersistentCalls:
       m_Calls: []
+  _buttonPressSound: {fileID: 8300000, guid: ec1fb417b689e47a4ab82ecb5e192d1b, type: 3}
+  _buttonReleaseSound: {fileID: 8300000, guid: 4a7629a98555e43eeba9974cb0b71a74, type: 3}
   _boxesToReset:
   - {fileID: 0}
   _whiteResetButtonSprite: {fileID: 977289126, guid: eeade6632759d4ec7b03512312a2233d, type: 3}

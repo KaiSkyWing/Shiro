@@ -9,7 +9,12 @@ public class Door : MonoBehaviour
     [SerializeField] private GameObject _doorTop;
     [SerializeField] private GameObject _doorBottom;
 
+    [SerializeField] private bool _playSound = true;
+    [SerializeField] private MusicManager _musicManager;
+
     [SerializeField] private float _doorOpenSpeed = 2f;
+
+    private bool _isOpen = false;
 
     private const float _doorOpenDistance = 2.5f;
 
@@ -53,6 +58,13 @@ public class Door : MonoBehaviour
             _doorTop.transform.DOMove(_targetPositionRight, _doorOpenSpeed);
             _doorBottom.transform.DOMove(_targetPositionLeft, _doorOpenSpeed);
         }
+
+        if (!_isOpen && _playSound && _musicManager != null)
+        {
+            _musicManager.PlaySE(4);
+        }
+
+        _isOpen = true;
     }
 
     public void CloseDoor()
@@ -61,5 +73,12 @@ public class Door : MonoBehaviour
         //move the door back to the original position using dotween
         _doorTop.transform.DOMove(_originalPositionTop, _doorOpenSpeed);
         _doorBottom.transform.DOMove(_originalPositionBottom, _doorOpenSpeed);
+
+        if (_playSound && _musicManager != null)
+        {
+            _musicManager.PlaySE(4);
+        }
+
+        _isOpen = false;
     }
 }

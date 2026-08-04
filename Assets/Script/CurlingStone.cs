@@ -29,8 +29,6 @@ public class CurlingStone : MonoBehaviour
     {
         if (!other.CompareTag("Ground"))
             return;
-
-        Debug.Log("CurlingStone collided with Ground");
         rightTleftF = !rightTleftF;
         UpdateDirection();
     }

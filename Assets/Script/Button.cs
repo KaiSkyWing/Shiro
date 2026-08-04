@@ -4,6 +4,8 @@ using UnityEngine.Events;
 public class Button : MonoBehaviour
 {
     [SerializeField] private bool _isEventButton = true;
+    [SerializeField] private bool _playSound = true;
+    [SerializeField] private MusicManager _musicManager;
 
     [Header("For Event Button")]
     [SerializeField] private bool _triggerOnlyOnce = true;
@@ -57,6 +59,18 @@ public class Button : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player") && !other.CompareTag("Box")&& !other.CompareTag("CurlingStone"))
+            return;
+
+        if (_playSound && _musicManager != null)
+        {
+            _musicManager.PlaySE(0);
+        }
+
+    }
+
     private void OnTriggerStay2D(Collider2D other)
     {
         if (_pressed && _triggerOnlyOnce)
@@ -86,6 +100,7 @@ public class Button : MonoBehaviour
             }
         }
     }
+    
 
     private void OnTriggerExit2D(Collider2D other)
     {
@@ -102,6 +117,11 @@ public class Button : MonoBehaviour
         else
         {
             SetResetButtonSprites(false);
+        }
+
+        if (_playSound && _musicManager != null)
+        {
+            _musicManager.PlaySE(1);
         }
     }
 

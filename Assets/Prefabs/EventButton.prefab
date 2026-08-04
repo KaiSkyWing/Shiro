@@ -152,6 +152,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  _buttonPressSound: {fileID: 8300000, guid: ec1fb417b689e47a4ab82ecb5e192d1b, type: 3}
+  _buttonReleaseSound: {fileID: 8300000, guid: 4a7629a98555e43eeba9974cb0b71a74, type: 3}
   _boxesToReset: []
   _whiteResetButtonSprite: {fileID: 0}
   _whiteResetButtonPressedSprite: {fileID: 0}
