@@ -180,6 +180,20 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (IsPaused)
+        {
+            if (_rigidbody2D != null)
+                _rigidbody2D.velocity = Vector2.zero;
+            return;
+        }
+
+        if (!_isAlive)
+        {
+            if (_rigidbody2D != null)
+                _rigidbody2D.velocity = Vector2.zero;
+            return;
+        }
+
         float verticalVelocity = _isOnLadder && !_isJumping ? _vertical * _moveSpeed : _rigidbody2D.velocity.y;
         _rigidbody2D.velocity = new Vector2(_horizontal * _moveSpeed, verticalVelocity);
     }
